@@ -8,16 +8,17 @@ def checkLine(line, newLines):
     if "module" in line:
         bracketStack.append("module")
         line += "\n  var l : bool list"
-    elif "while" in line:
+    elif ("while" in line) and ("{" in line):
         bracketStack.append("while")
         line += "\n  l <- true::l;"
-    elif "if" in line:
+    elif ("if" in line) and (not "if." in line):
         bracketStack.append("if")
         line += "\n l <- true::l;"
     elif "else" in line:
         bracketStack.append("else")
         line += "\nl <- false::l;"
-    elif "proc" in line:
+    elif ("proc" in line) and (not "proc." in line):
+        #have to put after the lines that intalize vars in them 
         bracketStack.append("proc")
         line += "\n l <- [];"
     elif "{" in line:
@@ -26,6 +27,9 @@ def checkLine(line, newLines):
     if "}" in line:
          line += (addEnd(bracketStack.pop()))
 
+    #make sure List is added to the imports
+    if ("require import" in line) and (not "List" in line):
+        line = line[:line.index("require import") + len("require import")] + " List" + line[line.index("require import") + len("require import") :]
 
 
     newLines.append(line)
@@ -35,7 +39,7 @@ def addEnd(t):
     if t == "module" or t == "proc" or t == "empty" or t =="if" or t == "else":
         return ""
     else:
-        return "\n l <- false::l"
+        return "\n l <- false::l;"
 
 
 def init():

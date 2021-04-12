@@ -2,7 +2,7 @@
 
 Due on Gradescope by 5pm on Friday, February 19 *)
 
-require import AllCore.
+require import List AllCore.
 
 (* NOTE: in the following Hoare Logic proofs, you may *not* use the
    tactics `auto` or `sp`, which we haven't covered in Lab or the slides
@@ -36,7 +36,6 @@ hoare
     proof.
       (* BEGIN FILL IN *)
       proc.
- l <- [];
       wp; skip; trivial.
       (* END FILL IN *)
   qed.
@@ -57,11 +56,11 @@ hoare
     while (false) {
   l <- true::l;
           }
- l <- false::l
+ l <- false::l;
         }
       }
           else {
- l <- false::l;
+l <- false::l;
           z <- y - x - 1;
       }
     }
@@ -72,15 +71,11 @@ hoare [M.f : true ==> M.z < 0].
     proof.
       (* BEGIN FILL IN *)
       proc.
- l <- [];
       if.
- l <- true::l;
       seq 1: (M.x < M.y /\ M.z = M.x - M.y).
       wp; skip; trivial.
       if.
- l <- true::l;
       while (M.x < M.y /\ M.z = M.x - M.y).
-  l <- true::l;
       wp; skip; trivial.
       wp; skip. 
       smt().
@@ -102,15 +97,11 @@ hoare
     proof.
       (* BEGIN FILL IN *)
       proc.
- l <- [];
       if.
- l <- true::l;
       seq 1: (M.x < M.y /\ M.z = M.x - M.y).
       wp; skip; trivial.
       if.
- l <- true::l;
       while (M.x < M.y /\ M.z = M.x - M.y).
-  l <- true::l;
       wp; skip; trivial.
       wp; skip.
       smt().
@@ -251,7 +242,7 @@ lemma rev_ex : rev ws = [9; 7; 5; 3; 1].
     ys <- nth 0 xs i :: ys;
     i <- i + 1;
       }
- l <- false::l
+ l <- false::l;
           return ys;
     }
   }.
@@ -261,11 +252,9 @@ hoare [Rev.f : xs = _xs ==> res = rev _xs].
     proof.
       (* BEGIN FILL IN *)
       proc.
- l <- [];
       seq 2 : (xs = _xs /\ i = 0 /\ ys = []).
       wp; skip; trivial.
     while (size ys = i /\ xs = _xs /\ ys = rev(take (i) xs)). 
-  l <- true::l;
       wp; skip.
       progress.
       smt().
