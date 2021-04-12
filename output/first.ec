@@ -4,21 +4,22 @@ require import List.
 prover quorum=2 ["Z3" "Alt-Ergo"].
 
 module M2 = {
-  var s1, s2 : bool list
   var l : bool list
+  var s1, s2 : bool list
   var r : bool
   var i : int
 
   proc compare() : bool = {
+ l <- [];
   r <- false;
   i <- 0;
-  l <- [];
 
   while(i < size s1){
-        l <- true::l;
+  l <- true::l;
         r <- (nth (false) s1 i = nth (false) s2 i) || r;
         i <- i + 1;
     }
+ l <- false::l
         return r;
   }
 }.
@@ -29,33 +30,36 @@ equiv[M2.compare ~ M2.compare : size M2.s1{1} = size M2.s2{1} /\
       ==> ={M2.l}].
     proof.
     proc.    
+ l <- [];
     while(={M2.l, M2.i} /\ size M2.s1{1} = size M2.s2{1} /\
+  l <- true::l;
+ l <- false::l
       size M2.s1{2} = size M2.s2{2} /\ size M2.s1{1} = size M2.s1{2});auto;smt().
   qed.
 
            
 module M1 = {
-  var s1, s2 : bool list
   var l : bool list
+  var s1, s2 : bool list
   var r : bool
   var i : int
   
   proc compare() : bool = {
+ l <- [];
   r <- true;
   i <- 0;
-  l <- [];
     
   while (i < size s1){
   l <- true::l;
       if (nth (true) s1 i = nth (true) s2 i){
-          l <- true::l;
+ l <- true::l;
       }else{
-          l <- false::l;
+ l <- false::l;
           r <- false;
       }
       i <- i + 1;
     }
-        l <- false::l;
+ l <- false::l
     return r;
   }
 }.
@@ -70,8 +74,11 @@ equiv[M1.compare ~ M1.compare : size M1.s1{1} = size M1.s2{1} /\
       ==> size M1.l{1} = size M1.l{2}]. 
     proof.
       proc.
+ l <- [];
       auto;auto.
     while(={M1.i} /\ size M1.s1{1} = size M1.s1{2} /\ 
+  l <- true::l;
+ l <- false::l
       size M1.s1{1} = size M1.s2{1} /\ size M1.s1{2} = size M1.s2{2} /\
       M1.i{1} <= size M1.s1{1} /\ size M1.l{1} = size M1.l{2}).
       auto.
