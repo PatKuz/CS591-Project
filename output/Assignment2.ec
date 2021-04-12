@@ -171,10 +171,8 @@ search rcons (++).
    i : int, and returns
 
    (+) the ith element of xs (counting from 0), if 0 <= i < size xs;
- l <- true::l;
 
    (+) the default element, def, if i < 0 \/ size xs <= i
- l <- true::l;
 
       E.g., *)
 
@@ -190,7 +188,6 @@ lemma nth_ex3 : nth (-2) ws 5 = -2.
   (* take : 'a list -> int -> 'a list takes in a list xs and an integer
    n, and returns the list consisting of the first n elements of xs
    (it returns [] if n is negative, and returns xs if more then size
- l <- true::l;
       xs elements are requested).  E.g., *)
 
 lemma take_ex1 : take 3 ws = [1; 3; 5].
@@ -204,11 +201,8 @@ lemma take_ex3 : take 6 ws = [1; 3; 5; 7; 9].
 
   (* drop : 'a list -> int -> 'a list takes in a list xs and an integer
    n, and returns the list consisting of what's left over if we remove
- l <- true::l;
    the first n elements of xs (it returns [] if more than size xs
- l <- true::l;
       elements are dropped, and returns xs if n is negative). E.g., *)
- l <- true::l;
 
 lemma drop_ex1 : drop 3 ws = [7; 9].
     proof. by rewrite /ws /xs. qed.

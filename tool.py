@@ -2,29 +2,33 @@ import sys
 
 bracketStack = []
 
+inModule = False
+
 def checkLine(line, newLines):
     whitespace = (len(line) - len(line.lstrip()))+1
-    print(whitespace)
+    # print(whitespace)
+    global inModule
     if "module" in line:
+        inModule = True
         bracketStack.append("module")
         line += "\n  var l : bool list"
-    elif ("while" in line) and ("{" in line):
+    elif inModule and ("while" in line) and ("{" in line):
         bracketStack.append("while")
         line += "\n  l <- true::l;"
-    elif ("if" in line) and (not "if." in line):
+    elif inModule and ("if" in line) and (not "if." in line):
         bracketStack.append("if")
         line += "\n l <- true::l;"
-    elif "else" in line:
+    elif inModule and "else" in line:
         bracketStack.append("else")
         line += "\nl <- false::l;"
-    elif ("proc" in line) and (not "proc." in line):
+    elif inModule and ("proc" in line) and (not "proc." in line):
         #have to put after the lines that intalize vars in them 
         bracketStack.append("proc")
         line += "\n l <- [];"
-    elif "{" in line:
+    elif inModule and "{" in line:
         bracketStack.append("empty")
 
-    if "}" in line:
+    if inModule and "}" in line:
          line += (addEnd(bracketStack.pop()))
 
     #make sure List is added to the imports
@@ -36,13 +40,19 @@ def checkLine(line, newLines):
 
 
 def addEnd(t):
-    if t == "module" or t == "proc" or t == "empty" or t =="if" or t == "else":
+    global inModule
+    if t == "module":
+        inModule = False
+        return ""
+    if t == "proc" or t == "empty" or t =="if" or t == "else":
         return ""
     else:
         return "\n l <- false::l;"
 
 
 def init():
+    global inModule 
+    inModule = False
     try:
         FILE_NAME = str(sys.argv[1])
     except:
