@@ -1,4 +1,4 @@
-import sys, secrets
+import sys, secrets, argparse
 
 bracketStack = []
 
@@ -53,16 +53,22 @@ def addEnd(t, l_name):
 def init(l_name):
     global inModule
     inModule = False
-    try:
-        FILE_NAME = str(sys.argv[1])
-    except:
-        print('[ERROR] Usage: python3 tool.py <FILE_NAME> <>')
+    
+    parser = argparse.ArgumentParser(description='tool that helps user check for side-channel free noninterference')
+    parser.add_argument('-fn', '-filename', dest='file_name',required=True, help='file name')
+    parser.add_argument('-at', '-attack_type', dest='attack_type', choices=['cf','controlflow','t', 'timing'], type=str.lower, help='side-channel attack', required=True)
+    args = parser.parse_args()
+    FILE_NAME = args.file_name
 
     fileLines = []
-    with open('input/'+FILE_NAME) as f:
-        for line in f:
-            l = line.rstrip('\n')
-            checkLine(l, fileLines, l_name)
+    try:
+        with open('input/'+FILE_NAME) as f:
+            for line in f:
+                l = line.rstrip('\n')
+                checkLine(l, fileLines, l_name)
+    except:
+        print('FileNotFoundError: [Errno 2] No such file: ' + FILE_NAME)
+        sys.exit(1)
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
