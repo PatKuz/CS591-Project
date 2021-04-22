@@ -1,30 +1,30 @@
-import sys
+import sys, secrets
 
 bracketStack = []
 
 inModule = False
 
-def checkLine(line, newLines):
+def checkLine(line, newLines, l_name):
     whitespace = (len(line) - len(line.lstrip()))+1
     # print(whitespace)
     global inModule
     if "module" in line:
         inModule = True
         bracketStack.append("module")
-        line += "\n  var l : bool list"
+        line += "\n  var " + l_name +" : bool list"
     elif inModule and ("while" in line) and ("{" in line):
         bracketStack.append("while")
-        line += "\n  l <- true::l;"
+        line += "\n  " + l_name +" <- true::" + l_name +";"
     elif inModule and ("if" in line) and (not "if." in line):
         bracketStack.append("if")
-        line += "\n l <- true::l;"
+        line += "\n " + l_name +" <- true::" + l_name +";"
     elif inModule and "else" in line:
         bracketStack.append("else")
-        line += "\nl <- false::l;"
+        line += "\n" + l_name +" <- false::" + l_name +";"
     elif inModule and ("proc" in line) and (not "proc." in line):
-        #have to put after the lines that intalize vars in them 
+        #have to put after the lines that intalize vars in them
         bracketStack.append("proc")
-        line += "\n l <- [];"
+        line += "\n " + l_name +" <- [];"
     elif inModule and "{" in line:
         bracketStack.append("empty")
 
@@ -39,7 +39,7 @@ def checkLine(line, newLines):
     newLines.append(line)
 
 
-def addEnd(t):
+def addEnd(t, l_name):
     global inModule
     if t == "module":
         inModule = False
@@ -47,11 +47,11 @@ def addEnd(t):
     if t == "proc" or t == "empty" or t =="if" or t == "else":
         return ""
     else:
-        return "\n l <- false::l;"
+        return "\n " + l_name +" <- false::" + l_name +";"
 
 
-def init():
-    global inModule 
+def init(l_name):
+    global inModule
     inModule = False
     try:
         FILE_NAME = str(sys.argv[1])
@@ -62,7 +62,7 @@ def init():
     with open('input/'+FILE_NAME) as f:
         for line in f:
             l = line.rstrip('\n')
-            checkLine(l, fileLines)
+            checkLine(l, fileLines, l_name)
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
@@ -70,4 +70,4 @@ def init():
 
 
 if __name__ == '__main__':
-    init()
+    init(("l_"+secrets.token_hex(8)))
