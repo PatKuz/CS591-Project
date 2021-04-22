@@ -16,12 +16,12 @@ prover quorum=2 ["Alt-Ergo" "Z3"].
   (* QUESTION 1 (* 20 Points *) *)
 
 module Swap = {
-  var l : bool list
+  var l_b91a78 : bool list
   var x, y : int
 
   proc f() : unit = {
- l <- [];
   var z : int;
+l_b91a78 <- []; 
   z <- x;
   x <- y;
   y <- z;
@@ -43,24 +43,24 @@ hoare
       (* QUESTION 2 (40 Points) *)
 
   module M = {
-  var l : bool list
+  var l_b91a78 : bool list
     var x, y, z : int
 
     proc f() : unit = {
- l <- [];
+l_b91a78 <- []; 
     if (x < y) {
- l <- true::l;
+ l_b91a78 <- true::l_b91a78;
     z <- x - y;
     if (x <= y) {
- l <- true::l;
+ l_b91a78 <- true::l_b91a78;
     while (false) {
-  l <- true::l;
+  l_b91a78 <- true::l_b91a78;
           }
- l <- false::l;
+ l_b91a78 <- false::l_b91a78;
         }
       }
           else {
-l <- false::l;
+l_b91a78 <- false::l_b91a78;
           z <- y - x - 1;
       }
     }
@@ -224,19 +224,19 @@ lemma rev_ex : rev ws = [9; 7; 5; 3; 1].
       rewrite. *)
 
   module Rev = {
-  var l : bool list
+  var l_b91a78 : bool list
     proc f(xs : int list) : int list = {
- l <- [];
     var i : int;
     var ys : int list;
+l_b91a78 <- []; 
     i <- 0;
     ys <- [];
     while (i < size xs) {
-  l <- true::l;
+  l_b91a78 <- true::l_b91a78;
     ys <- nth 0 xs i :: ys;
     i <- i + 1;
       }
- l <- false::l;
+ l_b91a78 <- false::l_b91a78;
           return ys;
     }
   }.

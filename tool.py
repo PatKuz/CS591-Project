@@ -3,11 +3,18 @@ import sys, secrets, argparse
 bracketStack = []
 
 inModule = False
+lookingForVar = False
 
 def checkLine(line, newLines, l_name):
     whitespace = (len(line) - len(line.lstrip()))+1
     # print(whitespace)
     global inModule
+    global lookingForVar
+
+    if inModule and lookingForVar and not "var" in line:
+        line = "" + l_name +" <- []; \n" + line
+        lookingForVar = False
+
     if "module" in line:
         inModule = True
         bracketStack.append("module")
@@ -24,12 +31,13 @@ def checkLine(line, newLines, l_name):
     elif inModule and ("proc" in line) and (not "proc." in line):
         #have to put after the lines that intalize vars in them
         bracketStack.append("proc")
-        line += "\n " + l_name +" <- [];"
+        lookingForVar = True
+        # line += "\n " + l_name +" <- [];"
     elif inModule and "{" in line:
         bracketStack.append("empty")
 
     if inModule and "}" in line:
-         line += (addEnd(bracketStack.pop()))
+         line += (addEnd(bracketStack.pop(), l_name))
 
     #make sure List is added to the imports
     if ("require import" in line) and (not "List" in line):
@@ -61,14 +69,14 @@ def init(l_name):
     FILE_NAME = args.file_name
 
     fileLines = []
-    try:
-        with open('input/'+FILE_NAME) as f:
-            for line in f:
-                l = line.rstrip('\n')
-                checkLine(l, fileLines, l_name)
-    except:
-        print('FileNotFoundError: [Errno 2] No such file: ' + FILE_NAME)
-        sys.exit(1)
+    # try:
+    with open('input\\'+FILE_NAME) as f:
+        for line in f:
+            l = line.rstrip('\n')
+            checkLine(l, fileLines, l_name)
+    # except:
+    #     print('FileNotFoundError: [Errno 2] No such file: ' + FILE_NAME)
+    #     sys.exit(1)
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
@@ -76,4 +84,4 @@ def init(l_name):
 
 
 if __name__ == '__main__':
-    init(("l_"+secrets.token_hex(8)))
+    init(("l_"+secrets.token_hex(3)))
