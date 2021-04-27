@@ -10,7 +10,7 @@ def checkLineCF(line, newLines, l_name):
     global lookingForVar
 
     if inModule and lookingForVar and not "var" in line:
-        line = "" + l_name +" <- []; \n" + line
+        line = "  " + l_name +" <- []; \n" + line
         lookingForVar = False
 
     if "module" in line:
@@ -59,21 +59,21 @@ def checkLineT(line, newLines, c_name):
     global lookingForVar
 
     if inModule and lookingForVar and not "var" in line:
-        line = "" + c_name +" <- 0; \n" + line
+        line = "  " + c_name +" <- 0; \n" + line
         lookingForVar = False
 
     if "module" in line:
         inModule = True
         bracketStack.append("module")
         line += "\n  var " + c_name +" : int"
-    elif inModule and ("+" in line) and ('<-' in line):
-        line += '\n  c <- c + 1;'
-    elif inModule and ("-" in line) and ('<-' in line):
-        line += '\n  c <- c + 1;'
-    elif inModule and ("*" in line) and ('<-' in line):
-        line += '\n  c <- c + 5;'
-    elif inModule and ("/%" in line) and ('<-' in line):
-        line += '\n  c <- c + 5;'
+    elif inModule and ('<-' in line and '+' in line.replace('<-','')):
+        line += '\n  ' + c_name + ' <- ' + c_name +' + 1;'
+    elif inModule and ('<-' in line and '-' in line.replace('<-','')):
+        line += '\n  ' + c_name + ' <- ' + c_name +' + 1;'
+    elif inModule and ('<-' in line and '*' in line.replace('<-','')):
+        line += '\n  ' + c_name + ' <- ' + c_name +' + 5;'
+    elif inModule and ('<-' in line and '%/' in line.replace('<-','')):
+        line += '\n  ' + c_name + ' <- ' + c_name +' + 5;'
     elif inModule and ("proc" in line) and (not "proc." in line):
         #have to put after the lines that intalize vars in them
         bracketStack.append("proc")
@@ -84,8 +84,11 @@ def checkLineT(line, newLines, c_name):
     if inModule and "}" in line:
          line += (addEnd(bracketStack.pop(), c_name))
 
-    newLines.append(line)
+    if ("require import" in line) and (not "IntDiv" in line):
+        line = line[:line.index("require import") + len("require import")] + " IntDiv" + line[line.index("require import") + len("require import") :]
 
+    newLines.append(line)
+    
 
 def init(var_name):
     global inModule
