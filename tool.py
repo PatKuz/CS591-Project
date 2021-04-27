@@ -44,7 +44,7 @@ def checkLineCF(line, newLines, l_name):
     newLines.append(line)
 
 
-def addEnd(t, l_name):
+def addEnd(t, var_name):
     global inModule
     if t == "module":
         inModule = False
@@ -52,7 +52,7 @@ def addEnd(t, l_name):
     if t == "proc" or t == "empty" or t =="if" or t == "else":
         return ""
     else:
-        return "\n " + l_name +" <- false::" + l_name +";"
+        return "\n " + var_name +" <- false::" + var_name +";"
 
 def checkLineT(line, newLines, c_name):
     global inModule
@@ -82,7 +82,7 @@ def checkLineT(line, newLines, c_name):
         bracketStack.append("empty")
 
     if inModule and "}" in line:
-         line += (addEnd(bracketStack.pop(), l_name))
+         line += (addEnd(bracketStack.pop(), c_name))
 
     newLines.append(line)
 
