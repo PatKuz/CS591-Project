@@ -30,7 +30,6 @@ def checkLineCF(line, newLines, l_name):
         #have to put after the lines that intalize vars in them
         bracketStack.append("proc")
         lookingForVar = True
-        # line += "\n " + l_name +" <- [];"
     elif inModule and "{" in line:
         bracketStack.append("empty")
 
@@ -55,8 +54,40 @@ def addEnd(t, l_name):
     else:
         return "\n " + l_name +" <- false::" + l_name +";"
 
+def checkLineT(line, newLines, c_name):
+    global inModule
+    global lookingForVar
 
-def init(l_name):
+    if inModule and lookingForVar and not "var" in line:
+        line = "" + c_name +" <- 0; \n" + line
+        lookingForVar = False
+
+    if "module" in line:
+        inModule = True
+        bracketStack.append("module")
+        line += "\n  var " + c_name +" : int"
+    elif inModule and ("+" in line) and ('<-' in line):
+        line += '\n  c <- c + 1;'
+    elif inModule and ("-" in line) and ('<-' in line):
+        line += '\n  c <- c + 1;'
+    elif inModule and ("*" in line) and ('<-' in line):
+        line += '\n  c <- c + 5;'
+    elif inModule and ("/%" in line) and ('<-' in line):
+        line += '\n  c <- c + 5;'
+    elif inModule and ("proc" in line) and (not "proc." in line):
+        #have to put after the lines that intalize vars in them
+        bracketStack.append("proc")
+        lookingForVar = True
+    elif inModule and "{" in line:
+        bracketStack.append("empty")
+
+    if inModule and "}" in line:
+         line += (addEnd(bracketStack.pop(), l_name))
+
+    newLines.append(line)
+
+
+def init(var_name):
     global inModule
     inModule = False
 
@@ -72,8 +103,10 @@ def init(l_name):
     with open('input/'+FILE_NAME) as f:
         for line in f:
             l = line.rstrip('\n')
-            if ATTACK_TYPE = 'cf' or ATTACK_TYPE = controlflow
-                checkLineCF(l, fileLines, l_name)
+            if ATTACK_TYPE == 'cf' or ATTACK_TYPE == 'controlflow':
+                checkLineCF(l, fileLines, ('l_'+var_name))
+            else:
+                checkLineT(l, filenames, ('c_'+var_name))
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
@@ -81,4 +114,4 @@ def init(l_name):
 
 
 if __name__ == '__main__':
-    init(("l_"+secrets.token_hex(3)))
+    init(secrets.token_hex(3))
