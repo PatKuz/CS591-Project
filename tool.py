@@ -5,9 +5,7 @@ bracketStack = []
 inModule = False
 lookingForVar = False
 
-def checkLine(line, newLines, l_name):
-    whitespace = (len(line) - len(line.lstrip()))+1
-    # print(whitespace)
+def checkLineCF(line, newLines, l_name):
     global inModule
     global lookingForVar
 
@@ -61,22 +59,21 @@ def addEnd(t, l_name):
 def init(l_name):
     global inModule
     inModule = False
-    
+
     parser = argparse.ArgumentParser(description='tool that helps user check for side-channel free noninterference')
     parser.add_argument('-fn', '-filename', dest='file_name',required=True, help='file name')
     parser.add_argument('-at', '-attack_type', dest='attack_type', choices=['cf','controlflow','t', 'timing'], type=str.lower, help='side-channel attack', required=True)
     args = parser.parse_args()
     FILE_NAME = args.file_name
+    ATTACK_TYPE = args.attack_type
 
     fileLines = []
-    # try:
-    with open('input\\'+FILE_NAME) as f:
+
+    with open('input/'+FILE_NAME) as f:
         for line in f:
             l = line.rstrip('\n')
-            checkLine(l, fileLines, l_name)
-    # except:
-    #     print('FileNotFoundError: [Errno 2] No such file: ' + FILE_NAME)
-    #     sys.exit(1)
+            if ATTACK_TYPE = 'cf' or ATTACK_TYPE = controlflow
+                checkLineCF(l, fileLines, l_name)
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
