@@ -106,7 +106,7 @@ def init(var_name):
             if ATTACK_TYPE == 'cf' or ATTACK_TYPE == 'controlflow':
                 checkLineCF(l, fileLines, ('l_'+var_name))
             else:
-                checkLineT(l, filenames, ('c_'+var_name))
+                checkLineT(l, fileLines, ('c_'+var_name))
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
