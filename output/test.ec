@@ -1,21 +1,26 @@
-require import AllCore.
-require import List.
+require import IntDiv AllCore.
+require import IntDiv List.
 
 prover quorum=2 ["Z3" "Alt-Ergo"].
 
 module M2 = {
+  var c_66d78a : int
   var r : bool
   var i : int
 
   proc test() : bool = {
+  c_66d78a <- 0; 
   r <- false;
   i <- 0;
 
   i <- 1 + 2;
+  c_66d78a <- c_66d78a + 1;
   
   i <- 3 * 4;
+  c_66d78a <- c_66d78a + 5;
   
   i <- 5 - 6;
+  c_66d78a <- c_66d78a + 1;
 
   i <- 7 /% 8;
 

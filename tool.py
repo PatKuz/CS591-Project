@@ -4,10 +4,23 @@ bracketStack = []
 
 inModule = False
 lookingForVar = False
+lookingForElse = False
 
 def checkLineCF(line, newLines, l_name):
     global inModule
     global lookingForVar
+    global lookingForElse
+
+    
+    if inModule and "}" in line:
+        ret = (addEnd(bracketStack.pop(), l_name))
+        if ("else" in ret):
+            newLines.append(ret)
+            lookingForElse = True
+            checkLineCF(line, newLines, l_name)
+            return
+        else:
+            line += ret
 
     if inModule and lookingForVar and not "var" in line:
         line = "  " + l_name +" <- []; \n" + line
@@ -33,8 +46,15 @@ def checkLineCF(line, newLines, l_name):
     elif inModule and "{" in line:
         bracketStack.append("empty")
 
-    if inModule and "}" in line:
-         line += (addEnd(bracketStack.pop(), l_name))
+   
+
+    if inModule and lookingForElse:
+        if ('else' in line):
+            lookingForElse = False
+        elif not line.isspace() and (not line.replace('}', '').isspace()):
+            #add else statement
+            lookingForElse = False
+            line = 'else{\n' + l_name + ' <- false::' + l_name + ';\n}' + line  
 
     #make sure List is added to the imports
     if ("require import" in line) and (not "List" in line):
@@ -46,8 +66,14 @@ def checkLineCF(line, newLines, l_name):
 
 def addEnd(t, var_name):
     global inModule
+    global lookingForElse
     if t == "module":
         inModule = False
+        return ""
+    if t == "if":
+        if(lookingForElse):
+            return 'else{\n' + var_name + ' <- false::' + var_name + ';\n}'
+        lookingForElse = True
         return ""
     if t == "proc" or t == "empty" or t =="if" or t == "else":
         return ""
