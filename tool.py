@@ -88,7 +88,7 @@ def checkLineT(line, newLines, c_name):
         line = line[:line.index("require import") + len("require import")] + " IntDiv" + line[line.index("require import") + len("require import") :]
 
     newLines.append(line)
-    
+
 
 def init(var_name):
     global inModule
@@ -114,6 +114,7 @@ def init(var_name):
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
             f.write(line+'\n')
+    print('Saved annotated file to: output/' + FILE_NAME)
 
 
 if __name__ == '__main__':
