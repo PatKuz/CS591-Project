@@ -1,55 +1,40 @@
-require import AllCore List.
-prover quorum=2 ["Z3" "Alt-Ergo"].
-
-
-module M1 = {
-  var l_7de00c : bool list
-  
-
-  proc min(a : int list) : int = {
-  var y, i : int;
-  l_7de00c <- []; 
-  i <- 1;
-  y <- nth 0 a 0;
-
-  if(true){
- l_7de00c <- true::l_7de00c;
-
-  }else{
-l_7de00c <- false::l_7de00c;
-
-  }
-
-  if(true){
- l_7de00c <- true::l_7de00c;
-
-  }
-else{
-l_7de00c <- false::l_7de00c;
-}
-
-   if(true){
- l_7de00c <- true::l_7de00c;
-
-   }
-   else{
-l_7de00c <- false::l_7de00c;
-
-   }
-
-
-    if(true){
- l_7de00c <- true::l_7de00c;
-        if(true){
- l_7de00c <- true::l_7de00c;
-            
-        }
-else{
-l_7de00c <- false::l_7de00c;
-}
-    }
-else{
-l_7de00c <- false::l_7de00c;
-}
-
-}.
+'require import AllCore List.\n'
+'prover quorum=2 ["Z3" "Alt-Ergo"].\n'
+'\n'
+'\n'
+'module M1 = {\n  var l_bd1fda : bool list\n'
+'  \n'
+'\n'
+'  proc min(a : int list) : int = {\n'
+'  var y, i : int;\n'
+'  l_bd1fda <- []; \n  i <- 1;\n'
+'  y <- nth 0 a 0;\n'
+'\n'
+'  if(true){\n l_bd1fda <- true::l_bd1fda;\n'
+'\n'
+'  }else{\nl_bd1fda <- false::l_bd1fda;\n'
+'\n'
+'  }\n'
+'\n'
+'  if(true){\n l_bd1fda <- true::l_bd1fda;\n'
+'\n'
+'  }\n'
+'else{\nl_bd1fda <- false::l_bd1fda;\n}\n'
+'\n'
+'   if(true){\n l_bd1fda <- true::l_bd1fda;\n'
+'\n'
+'   }\n'
+'   else{\nl_bd1fda <- false::l_bd1fda;\n'
+'\n'
+'   }\n'
+'\n'
+'\n'
+'    if(true){\n l_bd1fda <- true::l_bd1fda;\n'
+'        if(true){\n l_bd1fda <- true::l_bd1fda;\n'
+'            \n'
+'        }\n'
+'else{\nl_bd1fda <- false::l_bd1fda;\n}\n'
+'    }\n'
+'else{\nl_bd1fda <- false::l_bd1fda;\n}\n'
+'\n'
+'}.\n'

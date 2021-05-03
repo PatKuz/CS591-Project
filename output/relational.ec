@@ -5,7 +5,6 @@ prover quorum=2 ["Z3" "Alt-Ergo"].
 module M1 = {
   var l_df77cf : bool list
   
-
   proc min(a : int list) : int = {
   var y, i : int;
   l_df77cf <- []; 
@@ -21,9 +20,9 @@ module M1 = {
     else{
       l_df77cf <- false::l_df77cf;
     }
-        i <- i + 1;
-    }
-    l_df77cf <- false::l_df77cf;
-    return y;
+    i <- i + 1;
+  }
+  l_df77cf <- false::l_df77cf;
+  return y;
   }
 }.

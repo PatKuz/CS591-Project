@@ -1,15 +1,20 @@
 import sys, secrets, argparse
+from pprint import pprint
 
 bracketStack = []
 
 inModule = False
 lookingForVar = False
 lookingForElse = False
+moduleOnly = True 
 
 def checkLineCF(line, newLines, l_name):
     global inModule
     global lookingForVar
     global lookingForElse
+    global moduleOnly
+
+    changed = inModule
 
     
     if inModule and "}" in line:
@@ -30,6 +35,8 @@ def checkLineCF(line, newLines, l_name):
         inModule = True
         bracketStack.append("module")
         line += "\n  var " + l_name +" : bool list"
+    elif not inModule and moduleOnly and "require import" not in line and inModule == changed: 
+        return
     elif inModule and ("while" in line) and ("{" in line):
         bracketStack.append("while")
         line += "\n  " + l_name +" <- true::" + l_name +";"
@@ -46,8 +53,6 @@ def checkLineCF(line, newLines, l_name):
     elif inModule and "{" in line:
         bracketStack.append("empty")
 
-   
-
     if inModule and lookingForElse:
         if ('else' in line):
             lookingForElse = False
@@ -60,6 +65,7 @@ def checkLineCF(line, newLines, l_name):
     if ("require import" in line) and (not "List" in line):
         line = line[:line.index("require import") + len("require import")] + " List" + line[line.index("require import") + len("require import") :]
 
+    
 
     newLines.append(line)
 
@@ -115,7 +121,6 @@ def checkLineT(line, newLines, c_name):
 
     newLines.append(line)
     
-
 def init(var_name):
     global inModule
     inModule = False
@@ -123,6 +128,7 @@ def init(var_name):
     parser = argparse.ArgumentParser(description='tool that helps user check for side-channel free noninterference')
     parser.add_argument('-fn', '-filename', dest='file_name',required=True, help='file name')
     parser.add_argument('-at', '-attack_type', dest='attack_type', choices=['cf','controlflow','t', 'timing'], type=str.lower, help='side-channel attack', required=True)
+    parser.add_argument('-m', dest='module_only', type=str.lower, help='Only copy the modules')
     args = parser.parse_args()
     FILE_NAME = args.file_name
     ATTACK_TYPE = args.attack_type
@@ -139,6 +145,7 @@ def init(var_name):
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
+            # pprint(line+'\n', stream=f)
             f.write(line+'\n')
 
 

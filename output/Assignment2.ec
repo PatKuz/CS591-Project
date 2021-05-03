@@ -16,12 +16,12 @@ prover quorum=2 ["Alt-Ergo" "Z3"].
   (* QUESTION 1 (* 20 Points *) *)
 
 module Swap = {
-  var l_b91a78 : bool list
+  var l_d74fb3 : bool list
   var x, y : int
 
   proc f() : unit = {
   var z : int;
-l_b91a78 <- []; 
+  l_d74fb3 <- []; 
   z <- x;
   x <- y;
   y <- z;
@@ -43,76 +43,32 @@ hoare
       (* QUESTION 2 (40 Points) *)
 
   module M = {
-  var l_b91a78 : bool list
+  var l_d74fb3 : bool list
     var x, y, z : int
 
     proc f() : unit = {
-l_b91a78 <- []; 
+  l_d74fb3 <- []; 
     if (x < y) {
- l_b91a78 <- true::l_b91a78;
+ l_d74fb3 <- true::l_d74fb3;
     z <- x - y;
     if (x <= y) {
- l_b91a78 <- true::l_b91a78;
+ l_d74fb3 <- true::l_d74fb3;
     while (false) {
-  l_b91a78 <- true::l_b91a78;
+  l_d74fb3 <- true::l_d74fb3;
           }
- l_b91a78 <- false::l_b91a78;
+ l_d74fb3 <- false::l_d74fb3;
         }
+else{
+l_d74fb3 <- false::l_d74fb3;
+}
       }
           else {
-l_b91a78 <- false::l_b91a78;
+l_d74fb3 <- false::l_d74fb3;
           z <- y - x - 1;
       }
     }
   }.
 
-lemma M1 :
-hoare [M.f : true ==> M.z < 0].
-    proof.
-      (* BEGIN FILL IN *)
-      proc.
-      if.
-      seq 1: (M.x < M.y /\ M.z = M.x - M.y).
-      wp; skip; trivial.
-      if.
-      while (M.x < M.y /\ M.z = M.x - M.y).
-      wp; skip; trivial.
-      wp; skip. 
-      smt().
-      wp; skip.
-      smt().
-      seq 1 : (! M.x < M.y /\ M.z = M.y - M.x - 1).
-      wp; skip; trivial.
-      wp; skip.
-      smt().
-      (* END FILL IN *)
-  qed.
-
-lemma M2 :
-hoare
-    [M.f :
-      true ==>
-      (M.x < M.y  => M.z = M.x - M.y) /\
-      (M.y <= M.x => M.z + 1 = M.y - M.x)].
-    proof.
-      (* BEGIN FILL IN *)
-      proc.
-      if.
-      seq 1: (M.x < M.y /\ M.z = M.x - M.y).
-      wp; skip; trivial.
-      if.
-      while (M.x < M.y /\ M.z = M.x - M.y).
-      wp; skip; trivial.
-      wp; skip.
-      smt().
-      wp; skip.
-      smt().
-      seq 1 : (! M.x < M.y /\ M.z = M.y - M.x - 1).
-      wp; skip; trivial.
-      wp; skip.
-      smt().
-      (* END FILL IN *)
-  qed.
 
       (* QUESTION 3 (40 Points) *)
 
@@ -224,38 +180,19 @@ lemma rev_ex : rev ws = [9; 7; 5; 3; 1].
       rewrite. *)
 
   module Rev = {
-  var l_b91a78 : bool list
+  var l_d74fb3 : bool list
     proc f(xs : int list) : int list = {
     var i : int;
     var ys : int list;
-l_b91a78 <- []; 
+  l_d74fb3 <- []; 
     i <- 0;
     ys <- [];
     while (i < size xs) {
-  l_b91a78 <- true::l_b91a78;
+  l_d74fb3 <- true::l_d74fb3;
     ys <- nth 0 xs i :: ys;
     i <- i + 1;
       }
- l_b91a78 <- false::l_b91a78;
+ l_d74fb3 <- false::l_d74fb3;
           return ys;
     }
   }.
-
-lemma Rev_rev (_xs : int list) :
-hoare [Rev.f : xs = _xs ==> res = rev _xs].
-    proof.
-      (* BEGIN FILL IN *)
-      proc.
-      seq 2 : (xs = _xs /\ i = 0 /\ ys = []).
-      wp; skip; trivial.
-    while (size ys = i /\ xs = _xs /\ ys = rev(take (i) xs)). 
-      wp; skip.
-      progress.
-      smt().
-      smt(rev_rcons take_nth size_ge0).
-      wp; skip.
-      progress.
-      smt(take_le0).
-      smt(take_oversize).
-      (* END FILL IN *)
-  qed.

@@ -2,7 +2,7 @@
 
 Due on Gradescope by 5pm on Friday, February 12 *)
 
-require import AllCore.
+require import List AllCore.
 
 (* QUESTION 1
 
@@ -35,7 +35,6 @@ lemma peirce (a b : bool) :
       trivial.
       rewrite a_and_not_a.
     simplify.
- l <- true::l;
     elim a_and_not_a => [a_true | a_false].
       trivial.
     move => a_b_a.
@@ -73,7 +72,7 @@ lemma not_exists (P : 'a -> bool) :
    This question is about proving the equivalence of two definitions
       of when an integer is prime. *)
 
-  require import IntDiv StdOrder. (* lemmas for integer mod and div *)
+  require import List IntDiv StdOrder. (* lemmas for integer mod and div *)
   import IntOrder.                (* lemmas about <, <= on int *)
 
   (* n %/ x is the integer division of n by x, discarding any remainder
@@ -122,7 +121,6 @@ lemma div_le (x n : int) :
    Library will be helpful:
 
 lemma forall_iff (P P' : 'a -> bool) :
- l <- true::l;
  (forall x, P x <=> P' x) =>
  (forall (x : 'a), P x) <=> (forall (x : 'a), P' x).
       *)
@@ -197,7 +195,6 @@ lemma prime_equiv_ge2 (n : int) :
     rewrite not_exists in H.
     case(x <= 1) => [// | x_1].
     simplify.
- l <- true::l;
     rewrite (not_less) in x_1.
    have : x <= n.
       apply div_le.
@@ -212,19 +209,15 @@ lemma prime_equiv_ge2 (n : int) :
       apply forallPxPx.
       rewrite H.
     simplify.
- l <- true::l;
     trivial.
     case(x = n) => [// | x_not_].
       simplify.
- l <- true::l;
       rewrite x_1.
       rewrite H0.
       simplify.
- l <- true::l;
       apply ltr_def.
       rewrite x_n.
       simplify.
- l <- true::l;
     by  apply not_eq.
 
     progress.
@@ -236,7 +229,6 @@ lemma prime_equiv_ge2 (n : int) :
       have : !(x %| n /\ 1 < x /\ x < n).
       case( x %| n).
      simplify.
- l <- true::l;
      move => x_n.
       have : (x <= 1 \/ x =n).
       apply H1.
@@ -246,7 +238,6 @@ lemma prime_equiv_ge2 (n : int) :
       apply (ler_gtF) in x_1.
       rewrite x_1.
       simplify.
- l <- true::l;
       trivial.
       move => x_e_n.
       rewrite x_e_n.
