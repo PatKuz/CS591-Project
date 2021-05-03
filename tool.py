@@ -1,5 +1,5 @@
 import sys, secrets, argparse
-from pprint import pprint
+
 
 bracketStack = []
 
@@ -35,7 +35,7 @@ def checkLineCF(line, newLines, l_name):
         inModule = True
         bracketStack.append("module")
         line += "\n  var " + l_name +" : bool list"
-    elif not inModule and moduleOnly and "require import" not in line and inModule == changed: 
+    elif not inModule and moduleOnly and "require import" not in line and "prover" not in line and inModule == changed: 
         return
     elif inModule and ("while" in line) and ("{" in line):
         bracketStack.append("while")
@@ -90,14 +90,20 @@ def checkLineT(line, newLines, c_name):
     global inModule
     global lookingForVar
 
+    changed = inModule
+
     if inModule and lookingForVar and not "var" in line:
         line = "  " + c_name +" <- 0; \n" + line
         lookingForVar = False
 
+    
+    
     if "module" in line:
         inModule = True
         bracketStack.append("module")
         line += "\n  var " + c_name +" : int"
+    elif not inModule and moduleOnly and "require import" not in line and "prover" not in line and inModule == changed: 
+        return
     elif inModule and ('<-' in line and '+' in line.replace('<-','')):
         line += '\n  ' + c_name + ' <- ' + c_name +' + 1;'
     elif inModule and ('<-' in line and '-' in line.replace('<-','')):
