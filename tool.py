@@ -128,8 +128,10 @@ def init(var_name):
     parser = argparse.ArgumentParser(description='tool that helps user check for side-channel free noninterference')
     parser.add_argument('-fn', '-filename', dest='file_name',required=True, help='file name')
     parser.add_argument('-at', '-attack_type', dest='attack_type', choices=['cf','controlflow','t', 'timing'], type=str.lower, help='side-channel attack', required=True)
-    parser.add_argument('-m', dest='module_only', type=str.lower, help='Only copy the modules')
+    parser.add_argument('-m', action='store_true', help='Only copy the modules')
     args = parser.parse_args()
+    if args.m:
+        print('test')
     FILE_NAME = args.file_name
     ATTACK_TYPE = args.attack_type
 
@@ -147,6 +149,7 @@ def init(var_name):
         for line in fileLines:
             # pprint(line+'\n', stream=f)
             f.write(line+'\n')
+    print('[*] Saved annotated file to output/' + FILE_NAME)
 
 
 if __name__ == '__main__':
