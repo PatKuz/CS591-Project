@@ -6,7 +6,7 @@ bracketStack = []
 inModule = False
 lookingForVar = False
 lookingForElse = False
-moduleOnly = True 
+moduleOnly = False 
 
 def checkLineCF(line, newLines, l_name):
     global inModule
@@ -129,6 +129,7 @@ def checkLineT(line, newLines, c_name):
     
 def init(var_name):
     global inModule
+    global moduleOnly
     inModule = False
 
     parser = argparse.ArgumentParser(description='tool that helps user check for side-channel free noninterference')
@@ -136,8 +137,9 @@ def init(var_name):
     parser.add_argument('-at', '-attack_type', dest='attack_type', choices=['cf','controlflow','t', 'timing'], type=str.lower, help='side-channel attack', required=True)
     parser.add_argument('-m', action='store_true', help='Only copy the modules')
     args = parser.parse_args()
-    if args.m:
-        print('test')
+
+    moduleOnly = args.m
+    
     FILE_NAME = args.file_name
     ATTACK_TYPE = args.attack_type
 
