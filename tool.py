@@ -1,13 +1,31 @@
 import sys, secrets, argparse
 
+
 bracketStack = []
 
 inModule = False
 lookingForVar = False
+lookingForElse = False
+moduleOnly = False 
 
 def checkLineCF(line, newLines, l_name):
     global inModule
     global lookingForVar
+    global lookingForElse
+    global moduleOnly
+
+    changed = inModule
+
+    
+    if inModule and "}" in line:
+        ret = (addEnd(bracketStack.pop(), l_name))
+        if ("else" in ret):
+            newLines.append(ret)
+            lookingForElse = True
+            checkLineCF(line, newLines, l_name)
+            return
+        else:
+            line += ret
 
     if inModule and lookingForVar and not "var" in line:
         line = "  " + l_name +" <- []; \n" + line
@@ -17,6 +35,8 @@ def checkLineCF(line, newLines, l_name):
         inModule = True
         bracketStack.append("module")
         line += "\n  var " + l_name +" : bool list"
+    elif not inModule and moduleOnly and "require import" not in line and "prover" not in line and inModule == changed: 
+        return
     elif inModule and ("while" in line) and ("{" in line):
         bracketStack.append("while")
         line += "\n  " + l_name +" <- true::" + l_name +";"
@@ -33,21 +53,33 @@ def checkLineCF(line, newLines, l_name):
     elif inModule and "{" in line:
         bracketStack.append("empty")
 
-    if inModule and "}" in line:
-         line += (addEnd(bracketStack.pop(), l_name))
+    if inModule and lookingForElse:
+        if ('else' in line):
+            lookingForElse = False
+        elif not line.isspace() and (not line.replace('}', '').isspace()):
+            #add else statement
+            lookingForElse = False
+            line = 'else{\n' + l_name + ' <- false::' + l_name + ';\n}' + line  
 
     #make sure List is added to the imports
     if ("require import" in line) and (not "List" in line):
         line = line[:line.index("require import") + len("require import")] + " List" + line[line.index("require import") + len("require import") :]
 
+    
 
     newLines.append(line)
 
 
 def addEnd(t, var_name):
     global inModule
+    global lookingForElse
     if t == "module":
         inModule = False
+        return ""
+    if t == "if":
+        if(lookingForElse):
+            return 'else{\n' + var_name + ' <- false::' + var_name + ';\n}'
+        lookingForElse = True
         return ""
     if t == "proc" or t == "empty" or t =="if" or t == "else":
         return ""
@@ -58,14 +90,20 @@ def checkLineT(line, newLines, c_name):
     global inModule
     global lookingForVar
 
+    changed = inModule
+
     if inModule and lookingForVar and not "var" in line:
         line = "  " + c_name +" <- 0; \n" + line
         lookingForVar = False
 
+    
+    
     if "module" in line:
         inModule = True
         bracketStack.append("module")
         line += "\n  var " + c_name +" : int"
+    elif not inModule and moduleOnly and "require import" not in line and "prover" not in line and inModule == changed: 
+        return
     elif inModule and ('<-' in line and '+' in line.replace('<-','')):
         line += '\n  ' + c_name + ' <- ' + c_name +' + 1;'
     elif inModule and ('<-' in line and '-' in line.replace('<-','')):
@@ -88,16 +126,21 @@ def checkLineT(line, newLines, c_name):
         line = line[:line.index("require import") + len("require import")] + " IntDiv" + line[line.index("require import") + len("require import") :]
 
     newLines.append(line)
-
-
+    
+    
 def init(var_name):
     global inModule
+    global moduleOnly
     inModule = False
 
     parser = argparse.ArgumentParser(description='tool that helps user check for side-channel free noninterference')
     parser.add_argument('-fn', '-filename', dest='file_name',required=True, help='file name')
     parser.add_argument('-at', '-attack_type', dest='attack_type', choices=['cf','controlflow','t', 'timing'], type=str.lower, help='side-channel attack', required=True)
+    parser.add_argument('-m', action='store_true', help='Only copy the modules')
     args = parser.parse_args()
+
+    moduleOnly = args.m
+    
     FILE_NAME = args.file_name
     ATTACK_TYPE = args.attack_type
 
@@ -113,8 +156,11 @@ def init(var_name):
 
     with open('output/'+FILE_NAME, 'w') as f:
         for line in fileLines:
+            # pprint(line+'\n', stream=f)
             f.write(line+'\n')
-    print('Saved annotated file to: output/' + FILE_NAME)
+
+    print('[*] Saved annotated file to output/' + FILE_NAME)
+
 
 
 if __name__ == '__main__':

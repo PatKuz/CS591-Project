@@ -19,6 +19,8 @@ module M2 = {
 
   i <- 7 /% 8;
 
+  return i;
+
   }
 }.
 
