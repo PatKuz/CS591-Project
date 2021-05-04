@@ -127,6 +127,7 @@ def checkLineT(line, newLines, c_name):
 
     newLines.append(line)
     
+    
 def init(var_name):
     global inModule
     global moduleOnly
@@ -157,7 +158,9 @@ def init(var_name):
         for line in fileLines:
             # pprint(line+'\n', stream=f)
             f.write(line+'\n')
+
     print('[*] Saved annotated file to output/' + FILE_NAME)
+
 
 
 if __name__ == '__main__':
